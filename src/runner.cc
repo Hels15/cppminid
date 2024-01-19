@@ -6,13 +6,13 @@ int Du_Main(int argc, char**argv){
     std::string result = handle_file(argv);
     minid_parser save;
 
-    minid_ast base;
+    auto* base = new minid_ast();
 
     minid_lexer lexer = minid_new_lexer(result);
     minid_parser parser = minid_parser_init(lexer);
 
 
-   minid_parse(parser, base);
+   minid_parse(parser, *base);
 
     return 0;
 
