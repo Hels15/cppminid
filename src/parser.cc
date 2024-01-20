@@ -31,6 +31,7 @@ void print_token(minid_parser& parser){
     }
 }
 
+//
 static
 void print_ast(minid_parser& parser, minid_ast& result) {
     auto *temp = result.left;
@@ -155,6 +156,9 @@ minid_ast& minid_term(minid_parser& parser, minid_ast& cur_state){
                 minid_parser_next(parser);
                 minid_ast& right = minid_factor(parser, cur_state);
                 cur_state.right = &right;
+                minid_parser_next(parser); // skip DONSUS_MINUS
+                minid_token slash_token = {.kind = DONSUS_SLASH, .value = "/", .length = 1, .line = parser.lexer.cur_line};
+                cur_state.value = slash_token;
                 break;
             }
             default: break;

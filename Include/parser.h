@@ -67,7 +67,7 @@ struct minid_ast{
 struct minid_lexer {
     std::string string;
     char cur_char;
-    int cur_pos, cur_line;
+    unsigned int cur_pos, cur_line;
 };
 
 struct minid_parser{
