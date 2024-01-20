@@ -146,6 +146,9 @@ minid_ast& minid_term(minid_parser& parser, minid_ast& cur_state){
                 minid_parser_next(parser);
                 minid_ast& right = minid_factor(parser, cur_state);
                 cur_state.right = &right;
+                minid_parser_next(parser); // skip DONSUS_MINUS
+                minid_token star_token = {.kind = DONSUS_STAR, .value = "*", .length = 1, .line = parser.lexer.cur_line};
+                cur_state.value = star_token;
                 break;
             }
             case DONSUS_SLASH: {
