@@ -3,6 +3,7 @@
 
 // Recursive descent top-down parser lookahead(1)
 // Only works with Binary expressions
+// Todo: test framework, debug build option
 
 minid_ast& minid_term(minid_parser& parser,  minid_ast& cur_state);
 minid_ast& minid_expr(minid_parser& parser, minid_ast& cur_state);
@@ -26,14 +27,30 @@ static
 void print_token(minid_parser& parser){
     while (parser.cur_token.kind != DONSUS_END){
         std::cout << parser.cur_token << "\n";
-        minid_parser_next(parser);sched_yield();
+        minid_parser_next(parser); // DO this without moving the actual state of the parser
     }
 }
 
 static
 void print_ast(minid_parser& parser, minid_ast& result) {
-    std::cout << '\n' << result.left->value; // call custom operator <<
-    std::cout << '\n' << result.right->value; // call custom operator <<
+    auto *temp = result.left;
+    while (temp){
+        std::cout << '\n' << result.left->value; // call custom operator <<
+        if (temp->left){
+            temp = temp->left;
+        } else {
+            break;
+        }
+    }
+    temp = result.right;
+    while (temp){
+        std::cout << '\n' << result.right->value; // call custom operator <<
+        if (temp->right){
+            temp = temp->right;
+        } else {
+            break;
+        }
+    }
 }
 
 minid_parser& minid_parser_init(minid_lexer& lexer){
@@ -91,6 +108,10 @@ minid_ast& minid_expr(minid_parser& parser, minid_ast& cur_state) {
                 minid_parser_next(parser); // skip DONSUS_PLUS
                 minid_ast& right = minid_term(parser, cur_state);
                 cur_state.right = &right;
+                minid_parser_next(parser); // skip DONSUS_MINUS
+                // make + token
+                minid_token plus_token = {.kind = DONSUS_PLUS, .value = "+", .length = 1, .line = parser.lexer.cur_line};
+                cur_state.value = plus_token;
                 break;
             }
 
@@ -99,6 +120,9 @@ minid_ast& minid_expr(minid_parser& parser, minid_ast& cur_state) {
                 minid_ast& right = minid_term(parser, cur_state);
                 cur_state.right = &right;
                 minid_parser_next(parser); // skip DONSUS_MINUS
+                // make -  token
+                minid_token minus_token = {.kind = DONSUS_MINUS, .value = "-", .length = 1, .line = parser.lexer.cur_line};
+                cur_state.value = minus_token;
                 break;
             }
 
@@ -133,7 +157,6 @@ minid_ast& minid_term(minid_parser& parser, minid_ast& cur_state){
             default: break;
         }
     }
-
     return cur_state;
 }
 

@@ -3,6 +3,7 @@
 #define TOKEN_MAX_STRLEN 100
 
 minid_token* token_init(minid_token_kind kind,unsigned length ,unsigned line, std::string value,  minid_token * token){
+    // Todo: don't use raw pointers
     token->kind = kind;
     token->length = length;
     token->line = line;
